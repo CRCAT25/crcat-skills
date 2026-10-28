@@ -1,0 +1,3 @@
+Open Peeps by Pablo Stanley - https://www.openpeeps.com/ - CC0 1.0 (public domain, commercial use OK).
+Fetched via DiceBear (https://www.dicebear.com/styles/open-peeps/), style 'open-peeps', params:
+{'seed': 'Ti', 'head': 'short4', 'skinColor': 'f1c6a5', 'clothingColor': '5a92d6', 'headContrastColor': '2c1b18', 'accessoriesProbability': '0', 'facialHairProbability': '0', 'maskProbability': '0'}

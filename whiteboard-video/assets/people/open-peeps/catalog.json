@@ -1,0 +1,22 @@
+{
+  "_note": "Bust drawings, 720x972 RGBA. Tags judged by eye from contact sheets; check the still before use.",
+  "mood": {
+    "happy":   ["peep-5", "peep-11", "peep-13", "peep-14", "peep-24", "peep-28", "peep-34", "peep-41", "peep-51", "peep-52", "peep-55", "peep-67", "peep-91", "peep-97"],
+    "laugh":   ["peep-7", "peep-20", "peep-32", "peep-39", "peep-42", "peep-49", "peep-90"],
+    "love":    ["peep-18", "peep-105"],
+    "cool":    ["peep-4", "peep-40", "peep-48", "peep-62"],
+    "worried": ["peep-2", "peep-80", "peep-81"],
+    "shock":   ["peep-47", "peep-83"],
+    "annoyed": ["peep-45", "peep-46", "peep-59", "peep-84", "peep-88", "peep-93", "peep-98"],
+    "neutral": ["peep-6", "peep-26", "peep-44", "peep-78", "peep-87", "peep-96", "peep-99"]
+  },
+  "pose": {
+    "shrug":        ["peep-2", "peep-7", "peep-44"],
+    "phone":        ["peep-32", "peep-39", "peep-45", "peep-67", "peep-78"],
+    "coffee":       ["peep-34", "peep-59"],
+    "laptop":       ["peep-46"],
+    "point":        ["peep-52", "peep-90"],
+    "arms_crossed": ["peep-47"],
+    "hands_hip":    ["peep-14", "peep-20"]
+  }
+}
