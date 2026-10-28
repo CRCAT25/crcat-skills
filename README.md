@@ -23,7 +23,7 @@ In [Video Studio](https://github.com/CRCAT25/video-studio): Skills tab, import f
 
 ## Licence
 
-MIT for the code (see `LICENSE`). Bundled assets keep their own licences, listed in `THIRD_PARTY.md`.
+MIT for the code (see `LICENSE`). Bundled third-party assets keep their own licences, listed in `THIRD_PARTY.md`; the stickman sprites are original and MIT too.
 
 ## Adding a skill
 
