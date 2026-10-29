@@ -1,15 +1,15 @@
 ---
-name: me-thien-nhien-video
-description: Make an episode of the Mẹ Thiên Nhiên YouTube channel - a text-free, one-shot 3D science film (three.js rendered in headless Chrome) with real nature sounds, sparse Vietnamese narration, a ducked music bed, captions, thumbnail and publishing package. Use for any new MTN episode, topic idea, script, render, soundtrack, or upload.
+name: oneshot-3d-science-film
+description: Make a text-free, one-shot 3D science film for YouTube (procedural three.js rendered in headless Chrome) with real nature sounds, sparse Vietnamese narration, a ducked music bed, captions, thumbnail and publishing package. Defaults follow the Mẹ Thiên Nhiên channel. Use for any new Mẹ Thiên Nhiên (MTN) episode, or any science/nature/history-of-Earth film in this style: topic idea, script, render, soundtrack, or upload.
 ---
 
-# Mẹ Thiên Nhiên episode
+# One-shot 3D science film
 
 Recipe distilled from Episode 1, "Trái Đất ra đời: 4,6 tỷ năm trong 4 phút" (published 28/10/2026,
 youtu.be/GCLcej1_UPk; project `ai-video-projects/trai-dat-hinh-thanh`). The user liked the result: copy its format
 for every episode unless the user asks for a change.
 
-Everything lives in this folder (`~/.claude/skills/me-thien-nhien-video`, written `$SKILL` below):
+Everything lives in this folder (`~/.claude/skills/oneshot-3d-science-film`, written `$SKILL` below):
 
 - `template/` is the episode engine: three.js scenes rendered in headless Chrome, chunked render, audio mix,
   music bed, voice placement, captions, review page. `scripts/init_film.py` copies it into a new project.
