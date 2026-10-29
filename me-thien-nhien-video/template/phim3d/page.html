@@ -1,0 +1,67 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<script>// pixel-sized constants (point sizes, line widths, fwidth LOD, bloom reach) were tuned at 1080p
+{ const q = new URLSearchParams(location.search); globalThis.PXREF = +q.get('ref') || 1080; globalThis.PXF = (+q.get('h') || 1080) / globalThis.PXREF; }</script>
+<script type="module">
+import * as THREE from 'three';
+import { makePost } from '/lib/post.js';
+import { SCENES } from '/film.js';
+const q = new URLSearchParams(location.search);
+const W = +q.get('w') || 1920, H = +q.get('h') || 1080;
+const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(1); renderer.setSize(W, H);
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+renderer.toneMapping = THREE.NoToneMapping;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+// At 4K a single heavy draw can outlast the GPU watchdog and the context is lost (black frames from then on).
+// Split every draw into horizontal scissor strips with a flush between them so each GPU submission stays short.
+const STRIPS = +q.get('strips') || 1;
+if (STRIPS > 1) {
+  const gl = renderer.getContext(), draw = renderer.render.bind(renderer), v = new THREE.Vector4();
+  renderer.render = (scene, camera) => {
+    const rt = renderer.getRenderTarget();
+    const w = rt ? rt.width : renderer.domElement.width, h = rt ? rt.height : renderer.domElement.height;
+    if (w * h < 1920 * 1080) return draw(scene, camera);
+    const prev = rt ? [rt.scissor.clone(), rt.scissorTest] : [renderer.getScissor(v).clone(), renderer.getScissorTest()];
+    for (let i = 0; i < STRIPS; i++) {
+      const y0 = Math.floor(h * i / STRIPS), y1 = Math.floor(h * (i + 1) / STRIPS);
+      if (rt) { rt.scissor.set(0, y0, w, y1 - y0); rt.scissorTest = true; renderer.setRenderTarget(rt); }
+      else { renderer.setScissor(0, y0, w, y1 - y0); renderer.setScissorTest(true); }
+      draw(scene, camera);
+      gl.flush();
+    }
+    if (rt) { rt.scissor.copy(prev[0]); rt.scissorTest = prev[1]; renderer.setRenderTarget(rt); }
+    else { renderer.setScissor(prev[0]); renderer.setScissorTest(prev[1]); }
+  };
+}
+try {
+  const post = makePost(renderer, W, H);
+  const built = {};
+  const get = async (sc) => {
+    if (!built[sc.id]) {
+      const mod = await import('/scenes/' + sc.id + '.js?v=' + Date.now());
+      built[sc.id] = await mod.build({ THREE, renderer, W, H, dur: sc.t1 - sc.t0 });
+    }
+    return built[sc.id];
+  };
+  // only one scene alive at a time keeps GPU memory low on long renders
+  let live = null;
+  window.frame = async (t) => {
+    const sc = SCENES.find((s) => t >= s.t0 && t < s.t1) || SCENES[SCENES.length - 1];
+    if (live && live !== sc.id && built[live]) { built[live].dispose && built[live].dispose(); delete built[live]; }
+    live = sc.id;
+    const S = await get(sc);
+    const tl = t - sc.t0;
+    S.update(tl);
+    post.render(S, t, S.grade ? S.grade(tl) : {});
+    if (renderer.getContext().isContextLost()) throw new Error('WebGL context lost at t=' + t);
+    return renderer.domElement.toDataURL('image/jpeg', 0.97).slice(23);
+  };
+  window.DUR = SCENES[SCENES.length - 1].t1;
+  window.SCENES = SCENES;
+  window.READY = true;
+} catch (e) { window.ERR = String(e.stack || e); }
+</script></body></html>

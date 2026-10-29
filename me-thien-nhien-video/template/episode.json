@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "speed": 1.15,
+  "music": { "track": "audio/lib/music/mixkit-598_we-will-get-it.mp3", "body": [10.0, 234.0] },
+  "dips": [],
+  "nudge": {},
+  "take2": [],
+  "spell": { "Thê-a": "Theia" }
+}

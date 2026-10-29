@@ -5,6 +5,7 @@ A collection of [Claude Code](https://claude.com/claude-code) skills. Each skill
 | Skill | What it does |
 |---|---|
 | [whiteboard-video](whiteboard-video) | Hand-drawn whiteboard explainer videos: a marker pen draws text, icons, charts and stickman characters in sync with narration. Python (Pillow, numpy, scipy) + ffmpeg. |
+| [me-thien-nhien-video](me-thien-nhien-video) | Text-free, one-shot 3D science films for the Mẹ Thiên Nhiên channel: procedural three.js scenes rendered in headless Chrome, real nature sounds, sparse Vietnamese narration, ducked music bed, captions and a YouTube publishing package. Node (three, playwright-core) + ffmpeg + Python. |
 
 ## Install
 
@@ -19,7 +20,7 @@ One skill only: copy its folder into `~/.claude/skills/`, for example
 `cp -R crcat-skills/whiteboard-video ~/.claude/skills/`.
 
 In [Video Studio](https://github.com/CRCAT25/video-studio): Skills tab, import from GitHub, paste
-`https://github.com/CRCAT25/crcat-skills/tree/main/whiteboard-video`.
+`https://github.com/CRCAT25/crcat-skills/tree/main/whiteboard-video` (or `.../tree/main/me-thien-nhien-video`).
 
 ## Licence
 

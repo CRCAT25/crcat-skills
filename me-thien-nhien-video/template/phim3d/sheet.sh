@@ -1,0 +1,3 @@
+#!/bin/bash
+# sheet.sh out.jpg imgs...
+uv run --offline --no-project --with pillow python "$(dirname "$0")/sheet.py" "$@"
