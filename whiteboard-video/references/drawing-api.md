@@ -102,3 +102,30 @@ Defaults: `dur` comes from stroke length (pen speed 1500 px/s) or from the numbe
 - 2–4 big words, one or two icons or a photo, one highlight behind the key word.
 - Keep the bottom-right corner empty: YouTube's duration badge sits there.
 - Also save a 320×180 copy and check that it is readable small.
+
+## Living props (`anim_kit.py`)
+
+Props that move on every frame, on top of the ink. The pen never draws them, and they are never "unfinished".
+Use `b = ABoard(seed)` instead of `wb.Board` (the template's `build()` already does this):
+`from anim_kit import ABoard, Counter, Vehicle, ...`. All coordinates are 1920×1080 px, and times come from `at(k, off)`.
+Every prop takes `until=` (the time it disappears).
+
+- `b.anim(prop)`: adds a prop and returns it.
+- `b.stamp(s, cx, cy, start, color=RED, font=96, rot=-8, until=None, shake=9)`: a rubber stamp slams down and shakes the board.
+  - Its text is audited like text.
+  - **The thick stroke eats the horn of Ơ/Ư** ("HƠN" reads "HON"), and `½` comes out tiny. Pick words without them ("TIẾT KIỆM", "SAI", "50%").
+- `b.chat(s, x, y, start, name="", side=-1, size=48, until=None, width=None)`: a messenger bubble with an avatar that slides up (rumours, ads, what people say).
+  - `x` is the left edge (side −1) or the right edge (side +1); `y` is the top.
+- `Counter(cx, cy, start, t0, t1, v0, v1, size=110, fmt="{:,}", suffix="", color=INK)`: a number that counts from v0 to v1 between t0 and t1.
+  - Centre-anchored; thousands use dots (20.000). Land on the number the voice says.
+- `Vehicle(kind, keys, ground, start, s=1.0, face=1, color, rider, label=None, mood="happy")`: rolls along `keys = [(t, x), …]` on the road at y = `ground`.
+  - kind: `scooter | app | ebike | car | bus | truck`. Petrol vehicles puff smoke; `ebike` sparks.
+- `Clock(cx, cy, r, start, h0, h1, t0, t1, night=False)`: the hands spin from hour h0 to h1 between t0 and t1.
+- `Calendar(cx, cy, w, h, start, pages=[(t, big, small), …])`: a tear-off calendar; each page flips up at its time.
+- `Gauge(cx, cy, r, start, keys=[(t, value 0..1), …], limit=0.7)`: a half-dial with a wobbling needle and a red zone above `limit`.
+- `Progress(box, start, t0, t1, color)`: a bar that fills inside `box` between t0 and t1.
+- `Barrier(x, ground, start, t_down, L=420, side=1, t_up=None)`: a boom barrier that drops (a blocked rule, "không đủ điều kiện").
+- `Pin(x, y, start, color, size=60, ping=True)`, `Pointer(keys=[(t, x, y), …], start, direction="down")`: a map pin that drops and pings, and a fat arrow that hops.
+- `Card(cx, cy, w, h, start, t_flip, year)`, `Magnifier(at=lambda t: (x, y), start, r=56)`, `Camera(x, y, start, flashes=(t, …))`.
+
+Use about one living prop per board, on the sentence that needs motion. Keep its box clear of text; the audit only checks stamps and chats.

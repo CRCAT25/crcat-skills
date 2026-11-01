@@ -12,6 +12,7 @@ os.environ.setdefault("FRAME_FORMAT", "landscape")
 SKILL = Path(os.environ.get("WHITEBOARD_SKILL", "~/.claude/skills/whiteboard-video")).expanduser()
 sys.path.insert(0, str(SKILL / "scripts"))
 import whiteboard as wb  # noqa: E402
+from anim_kit import ABoard, Counter  # noqa: E402,F401  (living props: Vehicle, Clock, Gauge, ... see drawing-api.md)
 from whiteboard import BLUE, GREEN, GREY, INK, ORANGE, RED, YELLOW  # noqa: E402,F401
 
 from narration import CHAPTERS, PARAGRAPH_ENDS  # noqa: E402
@@ -179,12 +180,12 @@ def s1_compare(b, at):
     b.text(960, 40, "Mỗi ngày đi làm", 96, at(2, -0.3), align="center")
     base = 880
     hbar(b, (420, base - 20 * 26, 760, base), at(2, 0.4), PINK)
-    b.text(590, base - 20 * 26 - 100, "20.000 đ", 80, at(2, 0.9), align="center")
+    b.anim(Counter(590, base - 20 * 26 - 60, at(2, 0.9), at(2, 0.9), at(2, 2.1), 0, 20000, size=80, suffix=" đ"))
     b.text(590, base + 20, "xe máy", 56, at(2, 0.6), color=GREY, align="center")
     hbar(b, (1160, base - 9 * 26, 1500, base), at(3, 0.6), SKY)
     b.text(1330, base - 9 * 26 - 100, "≈ 9.000 đ", 80, at(3, 1.2), color=BLUE, align="center")
     b.text(1330, base + 20, "vé tháng ÷ 22", 56, at(3, 0.8), color=GREY, align="center")
-    b.sticker("text:RẺ HƠN", 1330, 380, at(3, 3.0), color=GREEN, shape="pill", font=64, rot=-5)
+    b.stamp("TIẾT KIỆM", 1330, 380, at(3, 3.0), color=GREEN, font=64, rot=-6)
 
 
 # ---------- 2 · Kết ----------
@@ -230,7 +231,7 @@ def build(cues, end_time, scenes=SCENES):
     for n, (ch, k, fn, kind, title) in enumerate(scenes):
         s0 = starts[n]
         s1 = starts[n + 1] if n + 1 < len(scenes) else end_time
-        b = wb.Board(seed=100 + n)
+        b = ABoard(seed=100 + n)
 
         def at(j, off=0.0, ch=ch, s0=s0):
             return cues[(ch, j)] - LEAD - s0 + off

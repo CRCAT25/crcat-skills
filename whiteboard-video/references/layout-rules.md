@@ -37,3 +37,5 @@
     - On the right, a grey frame `BOX = (1000, 230, 1780, 670)` for YouTube's end-screen video element.
     - That episode's thumbnail fades into the frame only after the pen has left it.
     - The teaser line must match that episode's real title.
+14. **Nothing is drawn over something else.** A late, slow stroke (an arrow, a circle) can cross a label drawn earlier. Look at in-between previews, not only the last frame, and move the element. The pen draws in creation order, so an element created later always ends up on top.
+15. **Board titles** are short (≤ ~5 words) and not over-bold: one size, one colour; the emphasis goes on one key number, not the whole title.

@@ -36,7 +36,7 @@ Câu ngắn. Câu ngắn tiếp theo.
    - The chapter title is a short noun phrase, and it becomes the YouTube chapter.
 3. **A re-hook at least every ~60 s.** Use an open loop ("con số này sẽ đảo ngược ở phần 4"), a twist, or a character with a problem.
 4. **Subscribe CTA, twice.**
-   - Mid-video (≈ 60–70 %): one short, natural sentence ("Nếu thấy cách tính này có ích, bấm đăng ký để xem tập sau nhé").
+   - Mid-video (≈ 64 %, at a chapter break): exactly one short, natural sentence of ~5 s ("Nếu thấy cách tính này có ích, bấm đăng ký để xem tập sau nhé"). Not a whole paragraph.
    - At the end: thank the viewer, ask for like + subscribe, *then* the line pointing to the other episode.
    - Show both on screen: a `text:ĐĂNG KÝ` pill sticker or the host pointing.
 5. **End.**
@@ -48,8 +48,11 @@ Câu ngắn. Câu ngắn tiếp theo.
 
 - Talk like a person explaining to a friend: "mình", "bạn", short sentences of 8–20 words. One number per sentence.
 - **Every number can be verified.** Keep `sources.md` (link, date, quoted figure).
+  - Compute every derived number (totals, monthly payments, percentages) in a small script (`calc.py`) and copy the results into the script. Never do the maths by hand.
+  - For money, prices, loans or rules: say the date of the figures and "không phải lời khuyên đầu tư" in the last chapter.
   - Write the assumptions on screen with `note("giả định …")`.
   - Use round numbers in the voice ("khoảng 240 km"); use the same rounding on screen ("≈ 240 km").
+- Titles and hooks may be curious, but not louder than the content can prove (no "sự thật bị giấu kín", no "100%").
 - No promises the channel cannot keep (e.g. "tập sau sẽ có …" only when that episode is planned).
 - Write each sentence with its picture in mind. If you cannot picture a board for a sentence, rewrite it.
 

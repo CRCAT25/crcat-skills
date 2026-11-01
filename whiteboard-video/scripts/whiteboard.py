@@ -1411,23 +1411,28 @@ class Board:
         canvas.alpha_composite(big.resize((x1 - x0, y1 - y0), Image.Resampling.LANCZOS), (x0, y0))
 
     def ink(self, t):
-        """Transparent RGBA layer with everything drawn up to time t (finished elements cached)."""
-        done = tuple(k for k, e in enumerate(self.items) if e.end <= t and not getattr(e, "animated", False))
-        if done != self._cache_key:
-            if self._cache_key is not None and set(self._cache_key) <= set(done):
-                base = self._cache.copy()
-                todo = [k for k in done if k not in self._cache_key]
-            else:
-                base = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-                todo = list(done)
-            for k in todo:
-                self._paint(base, self.items[k], 1.0)
-            self._cache_key, self._cache = done, base
+        """Transparent RGBA layer with everything drawn up to time t (finished elements cached).
+        Elements always stack in creation order: a later element covers an earlier one even if the
+        earlier one finishes drawing later (e.g. slow poles under a flyer)."""
+        flat = [not getattr(e, "animated", False) for e in self.items]
+        n = 0  # cache the longest prefix of finished (or animated, painted later) elements
+        while n < len(self.items) and (self.items[n].end <= t or not flat[n]):
+            n += 1
+        if self._cache_key is None or self._cache_key > n:
+            base, k0 = Image.new("RGBA", (W, H), (0, 0, 0, 0)), 0
+        else:
+            base, k0 = self._cache, self._cache_key
+        if self._cache_key != n:
+            base = base.copy() if base is self._cache else base
+            for k in range(k0, n):
+                if flat[k]:
+                    self._paint(base, self.items[k], 1.0)
+            self._cache_key, self._cache = n, base
         im = self._cache.copy()
         for k, e in enumerate(self.items):
-            if k not in done and e.start <= t:
+            if e.start <= t and (k >= n or not flat[k]):
                 e.now = t
-                self._paint(im, e, e.progress(t))
+                self._paint(im, e, 1.0 if flat[k] and e.end <= t else e.progress(t))
         for st in self.live:
             st.paste(im, t)
         return im

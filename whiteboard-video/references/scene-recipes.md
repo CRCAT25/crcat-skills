@@ -142,3 +142,16 @@ def s_end(b, at):
 
 - Check with `preview` that the ink inside `BOX` has stopped before `T_IN`.
 - Leave the bottom-right free for YouTube's subscribe element.
+
+## 13. Living props (motion without more ink)
+
+```python
+def s_cost(b, at):                                   # b is an ABoard
+    b.text(960, 260, "Mỗi tháng trả", 72, at(0), align="center")
+    b.anim(Counter(960, 470, at(0, 0.8), at(0, 0.8), at(0, 2.4), 0, 6200000, size=120, suffix=" đ", color=RED))
+    b.anim(Calendar(1500, 520, 260, 300, at(1), [(at(1), "1", "tháng 1"), (at(1, 1.2), "12", "tháng 12")]))
+    b.stamp("25 NĂM", 560, 640, at(2, 0.4), color=RED, font=80, rot=-6)
+```
+
+- The Counter lands on the number the voice says, a little after the word.
+- A `Vehicle` rolling across, a `Clock` spinning or a `Gauge` swinging carries a board for a whole sentence with no new text.

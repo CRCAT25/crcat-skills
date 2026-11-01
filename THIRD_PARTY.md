@@ -1,6 +1,7 @@
 # Third-party assets (whiteboard-video)
 
 - Patrick Hand font: SIL Open Font License (`whiteboard-video/assets/fonts/OFL-PatrickHand.txt`).
+- Be Vietnam Pro font (Shorts header/captions): SIL Open Font License (`whiteboard-video/assets/fonts/OFL-BeVietnamPro.txt`).
 - Tabler icons: MIT, https://github.com/tabler/tabler-icons
 - Open Peeps: CC0, https://www.openpeeps.com (Pablo Stanley)
 
