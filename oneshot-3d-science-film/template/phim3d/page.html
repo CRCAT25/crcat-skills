@@ -7,8 +7,11 @@
 <script type="module">
 import * as THREE from 'three';
 import { makePost } from '/lib/post.js';
-import { SCENES } from '/film.js';
 const q = new URLSearchParams(location.search);
+// ?film=/dev.js renders a scratch timeline (one scene in isolation) instead of the film
+const FILM = await import(q.get('film') || '/film.js'), { SCENES } = FILM;
+// frame(t) takes timeline time; holds (film.js) slow parts of a scene down, so scenes still see their own times
+const unhold = FILM.unhold || ((t) => t);
 const W = +q.get('w') || 1920, H = +q.get('h') || 1080;
 const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(1); renderer.setSize(W, H);
@@ -39,28 +42,60 @@ if (STRIPS > 1) {
 }
 try {
   const post = makePost(renderer, W, H);
+  const DUR = SCENES[SCENES.length - 1].t1;
+  window.DUR = FILM.END || DUR;
   const built = {};
+  // a scene with xf starts xf seconds early and dissolves in over the previous one (only where both share light);
+  // its local time runs from that early start, so neither scene freezes during the overlap
+  const start = (sc) => sc.t0 - (sc.xf || 0);
   const get = async (sc) => {
     if (!built[sc.id]) {
       const mod = await import('/scenes/' + sc.id + '.js?v=' + Date.now());
-      built[sc.id] = await mod.build({ THREE, renderer, W, H, dur: sc.t1 - sc.t0 });
+      built[sc.id] = await mod.build({ THREE, renderer, W, H, dur: sc.t1 - start(sc) });
     }
     return built[sc.id];
   };
-  // only one scene alive at a time keeps GPU memory low on long renders
-  let live = null;
-  window.frame = async (t) => {
-    const sc = SCENES.find((s) => t >= s.t0 && t < s.t1) || SCENES[SCENES.length - 1];
-    if (live && live !== sc.id && built[live]) { built[live].dispose && built[live].dispose(); delete built[live]; }
-    live = sc.id;
-    const S = await get(sc);
-    const tl = t - sc.t0;
-    S.update(tl);
-    post.render(S, t, S.grade ? S.grade(tl) : {});
-    if (renderer.getContext().isContextLost()) throw new Error('WebGL context lost at t=' + t);
-    return renderer.domElement.toDataURL('image/jpeg', 0.97).slice(23);
+  const sm = (a, b, x) => { const k = Math.min(1, Math.max(0, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
+  const mix2d = document.createElement('canvas'); mix2d.width = W; mix2d.height = H;
+  const ctx = mix2d.getContext('2d');
+  // ?mb=N: scenes that ask for it (mb: true) average N sub-frames across a shutter of ?sh film seconds, so fast
+  // wreckage smears like a real camera's motion blur; the other scenes render once
+  const MB = +q.get('mb') || 1, SH = +q.get('sh') || 0.01;
+  const acc = document.createElement('canvas'); acc.width = W; acc.height = H;
+  const actx = acc.getContext('2d');
+  const one = async (sc, t) => {
+    const S = await get(sc), n = S.mb ? MB : 1;
+    for (let k = 0; k < n; k++) {
+      const tk = t + (n > 1 ? SH * (k / (n - 1) - 0.5) : 0), tl = tk - start(sc);
+      S.update(tl);
+      post.render(S, tk, S.grade ? S.grade(tl) : {});
+      if (renderer.getContext().isContextLost()) throw new Error('WebGL context lost at t=' + t);
+      if (n > 1) { actx.globalAlpha = 1 / (k + 1); actx.drawImage(renderer.domElement, 0, 0); }
+    }
+    return n > 1 ? acc : renderer.domElement;
   };
-  window.DUR = SCENES[SCENES.length - 1].t1;
+  // only the scenes needed for this frame stay alive: GPU memory stays low on long renders
+  window.frame = async (t) => {
+    t = unhold(t);
+    const i = Math.max(0, SCENES.findIndex((s) => t >= s.t0 && t < s.t1)), sc = SCENES[t >= DUR ? SCENES.length - 1 : i];
+    const nx = SCENES[SCENES.indexOf(sc) + 1];
+    const into = nx && nx.xf && t >= start(nx) ? nx : null;
+    const need = new Set([sc.id, into && into.id]);
+    for (const id of Object.keys(built)) if (!need.has(id)) { built[id].dispose && built[id].dispose(); delete built[id]; }
+    const a = await one(sc, t);
+    if (!into) return a.toDataURL('image/jpeg', 0.97).slice(23);
+    // the cut is carried by motion: the outgoing shot keeps pushing in while the next one settles out of a slight
+    // zoom; a scene with tx (film.js) also passes through a veil of cloud/rain at the midpoint so the two read as
+    // one continuous move (rising through cloud, dropping under it) rather than a ghosted double exposure
+    const x = (t - start(into)) / into.xf, tx = into.tx, k = tx ? 0.1 : 0.05;
+    const zoom = (img, z, al) => { ctx.globalAlpha = al; ctx.drawImage(img, W * (1 - z) / 2, H * (1 - z) / 2, W * z, H * z); };
+    zoom(a, 1 + k * x * x, 1);
+    const b = await one(into, t);
+    const w = tx ? sm(0.3, 0.7, x) : sm(0, 1, x), e = 1 - x;
+    zoom(b, 1 + k * e * e, w);
+    if (tx) { ctx.globalAlpha = tx.a * Math.pow(Math.sin(Math.PI * x), 1.4); ctx.fillStyle = tx.c; ctx.fillRect(0, 0, W, H); }
+    return mix2d.toDataURL('image/jpeg', 0.97).slice(23);
+  };
   window.SCENES = SCENES;
   window.READY = true;
 } catch (e) { window.ERR = String(e.stack || e); }

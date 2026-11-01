@@ -1,0 +1,150 @@
+{
+  "title": "Nếu siêu bão mạnh nhất lịch sử đổ bộ thì sao?",
+  "speed": 1.15,
+  "music": {
+    "track": "audio/lib/music/mixkit-598_we-will-get-it.mp3",
+    "body": [
+      10.0,
+      234.0
+    ]
+  },
+  "dips": [],
+  "nudge": {
+    "3": 21.8,
+    "9": 69.6,
+    "10": 78.6,
+    "11": 86.2,
+    "18": 152.0,
+    "28": 244.8
+  },
+  "take2": [],
+  "spell": {
+    "Pa-tri-xi-a": "Patricia",
+    "Hai-an": "Haiyan",
+    "Phi-líp-pin": "Philippines",
+    "héc-tô-pát-xcan": "hPa",
+    "Mê-hi-cô": "Mexico",
+    "Ba trăm bốn mươi lăm cây số một giờ": "345 km/h",
+    "ba trăm bốn mươi lăm cây số một giờ": "345 km/h",
+    "một trăm chín mươi lăm cây số một giờ": "195 km/h",
+    "cấp mười hai": "cấp 12",
+    "hai mươi sáu phẩy năm độ": "26,5 °C",
+    "ba mươi độ": "30 °C",
+    "Năm hai nghìn không trăm mười lăm": "Năm 2015",
+    "Năm hai nghìn không trăm mười ba": "Năm 2013",
+    "hai mươi bốn giờ": "24 giờ",
+    "tám trăm bảy mươi hai hPa": "872 hPa",
+    "một nghìn không trăm mười ba": "1.013",
+    "bốn phẩy sáu đến bảy mét": "4,6 đến 7 mét",
+    "Hơn sáu nghìn ba trăm người": "Hơn 6.300 người",
+    "suốt năm mươi năm": "suốt 50 năm",
+    "mười năm gần đây": "10 năm gần đây",
+    "cấp bốn, cấp năm": "cấp 4, cấp 5"
+  },
+  "score": [
+    {
+      "track": "audio/lib/music/mixkit-676_epical-drums-01.mp3",
+      "at": 0.0,
+      "to": 8.6,
+      "from": 0.0,
+      "lufs": -17,
+      "fi": 0.05,
+      "fo": 1.5
+    },
+    {
+      "track": "audio/lib/sfx/mixkit-788_big-cinematic-impact.mp3",
+      "at": 7.3,
+      "to": 14.5,
+      "lufs": -17,
+      "fi": 0.01,
+      "fo": 3.0
+    },
+    {
+      "track": "audio/lib/music/mixkit-168_staring-at-the-night-sky_alejandro-magana.mp3",
+      "at": 7.0,
+      "to": 61.978,
+      "from": 8.0,
+      "lufs": -22,
+      "fi": 3.0,
+      "fo": 3.0
+    },
+    {
+      "track": "audio/lib/music/mixkit-53_training.mp3",
+      "at": 59.478,
+      "to": 133.978,
+      "from": 0.0,
+      "lufs": -21,
+      "fi": 3.0,
+      "fo": 2.5
+    },
+    {
+      "track": "audio/lib/sfx/mixkit-788_big-cinematic-impact.mp3",
+      "at": 69.478,
+      "to": 76.478,
+      "lufs": -18,
+      "fi": 0.01,
+      "fo": 3.0
+    },
+    {
+      "track": "audio/lib/music/mixkit-76_epic-games.mp3",
+      "at": 131.478,
+      "to": 173.078,
+      "from": 20.0,
+      "lufs": -19,
+      "fi": 2.0,
+      "fo": 1.2
+    },
+    {
+      "track": "audio/lib/sfx/mixkit-788_big-cinematic-impact.mp3",
+      "at": 132.978,
+      "to": 139.978,
+      "lufs": -17,
+      "fi": 0.01,
+      "fo": 3.0
+    },
+    {
+      "track": "audio/lib/music/mixkit-588_feedback-dreams.mp3",
+      "at": 171.878,
+      "to": 199.478,
+      "from": 40.0,
+      "lufs": -25,
+      "fi": 1.5,
+      "fo": 1.5
+    },
+    {
+      "track": "audio/lib/music/mixkit-686_epical-drums-06.mp3",
+      "at": 198.178,
+      "to": 220.978,
+      "from": 0.0,
+      "lufs": -18,
+      "fi": 0.05,
+      "fo": 2.0
+    },
+    {
+      "track": "audio/lib/sfx/mixkit-788_big-cinematic-impact.mp3",
+      "at": 198.178,
+      "to": 205.178,
+      "lufs": -17,
+      "fi": 0.01,
+      "fo": 3.0
+    },
+    {
+      "track": "audio/lib/music/mixkit-714_classical-7.mp3",
+      "at": 219.478,
+      "to": 264.2,
+      "from": 0.0,
+      "lufs": -22,
+      "fi": 2.0,
+      "fo": 1.0
+    },
+    {
+      "track": "audio/lib/sfx/mixkit-1177_deep-cinematic-wind-hum.wav",
+      "at": 219.478,
+      "to": 264.2,
+      "from": 0.0,
+      "lufs": -30,
+      "fi": 4.0,
+      "fo": 1.0
+    }
+  ]
+}

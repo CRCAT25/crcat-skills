@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Scaffold a new Mẹ Thiên Nhiên 3D film episode from the skill's template/.
 
-python3 init_film.py <slug> --title "Tiêu đề" [--root DIR] [--from trai-dat-hinh-thanh] [--no-audio-lib]
+python3 init_film.py <slug> --title "Tiêu đề" [--root DIR] [--from sieu-bao] [--no-audio-lib]
 
 Creates <root>/<slug>/ (root: --root, else $MTN_ROOT, else ./ai-video-projects) (no date in the name). node_modules (three + playwright-core) and the licensed
 audio library (audio/lib with LICENSES.md) are cloned from the previous episode (--from) so the setup works offline;
@@ -25,7 +25,7 @@ def main():
     ap.add_argument('slug')
     ap.add_argument('--title', default='')
     ap.add_argument('--root', default=os.environ.get('MTN_ROOT', 'ai-video-projects'))
-    ap.add_argument('--from', dest='prev', default='trai-dat-hinh-thanh')
+    ap.add_argument('--from', dest='prev', default='sieu-bao')
     ap.add_argument('--no-audio-lib', action='store_true')
     a = ap.parse_args()
 

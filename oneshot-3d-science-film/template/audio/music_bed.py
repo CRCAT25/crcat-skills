@@ -3,6 +3,8 @@
 # The music loops its body (the steady part after the intro) with a crossfade, drops 11 dB while the narration speaks
 # (down 0.3 s before each phrase, back up over 1 s after) and to near silence through the DIPS in episode.json.
 # Without --track it uses episode.json "music". Preview several tracks with --to 42 for the user to choose.
+# With episode.json "score" (and no --track) the bed is cut from several tracks instead, one segment per section:
+# {track, at, to, from, lufs, fi, fo} in final time, each levelled to its own loudness; overlaps act as crossfades.
 import subprocess, sys, os, re
 import numpy as np
 from episode import CFG, LENGTH, DIPS, SPEED, ROOT
@@ -44,7 +46,25 @@ def loudness(track, a, b):
     return float(err.split('Integrated loudness:')[1].split('I:')[1].split('LUFS')[0])
 
 
+def score_bed(segs, out):
+    args, parts = ['ffmpeg', '-y', '-v', 'error'], []
+    for i, g in enumerate(segs):
+        track = os.path.join(ROOT, g['track'])
+        a, b, src = g['at'], g['to'], g.get('from', 0.0)
+        gain = g.get('lufs', -21.0) - loudness(track, src, src + min(b - a, 30))
+        args += ['-ss', str(src), '-t', str(b - a), '-i', track]
+        parts.append(f'[{i}:a]aresample=48000,aformat=channel_layouts=stereo,volume={gain:.2f}dB,'
+                     f'afade=t=in:d={g.get("fi", 2.0)},afade=t=out:st={b - a - g.get("fo", 2.0):.3f}:d={g.get("fo", 2.0)},'
+                     f'adelay={int(a * 1000)}:all=1[g{i}]')
+    parts.append(''.join(f'[g{i}]' for i in range(len(segs))) +
+                 f'amix=inputs={len(segs)}:normalize=0:dropout_transition=0,apad,atrim=0:{LENGTH}[out]')
+    run(*args, '-filter_complex', ';'.join(parts), '-map', '[out]', '-ar', '48000', out)
+
+
 def build(track, body, out, to, lufs=-21.0):
+    if body is None:  # a ready-made score bed: play it as is
+        return mix(track, ['[0:a]aresample=48000,aformat=channel_layouts=stereo,'
+                           f'afade=t=out:st={LENGTH - 6}:d=6[bm]'], out, to)
     s0, s1 = body
     gain = lufs - loudness(track, s0, s1)
     n = int(LENGTH // (s1 - s0 - XF)) + 1
@@ -54,9 +74,13 @@ def build(track, body, out, to, lufs=-21.0):
     for i in range(1, n):
         parts.append(f'{chain}[m{i}]acrossfade=d={XF}:c1=qsin:c2=qsin[x{i}]')
         chain = f'[x{i}]'
-    parts += [
+    parts.append(f'{chain}atrim=0:{LENGTH},volume={gain:.2f}dB,afade=t=in:d=2,afade=t=out:st={LENGTH - 6}:d=6[bm]')
+    mix(track, parts, out, to)
+
+
+def mix(track, parts, out, to):
+    parts = parts + [
         '[3:a]aresample=48000,aformat=channel_layouts=stereo[env]',
-        f'{chain}atrim=0:{LENGTH},volume={gain:.2f}dB,afade=t=in:d=2,afade=t=out:st={LENGTH - 6}:d=6[bm]',
         '[bm][env]amultiply[bed]',
         '[2:a]aresample=48000,volume=1.3dB,asplit[vo][sc]',
         f'[1:a]atempo={SPEED},aresample=48000[s]',
@@ -73,6 +97,12 @@ def build(track, body, out, to, lufs=-21.0):
 if __name__ == '__main__':
     a = sys.argv
     opt = lambda k, d: a[a.index(k) + 1] if k in a else d
-    track = opt('--track', os.path.join(ROOT, CFG['music']['track']))
-    body = [float(x) for x in opt('--body', ':'.join(map(str, CFG['music']['body']))).split(':')]
-    build(track, body, a[1], float(opt('--to', LENGTH)))
+    if 'score' in CFG and '--track' not in a:
+        bed = a[1] + '.score.wav'
+        score_bed(CFG['score'], bed)
+        build(bed, None, a[1], float(opt('--to', LENGTH)))
+        os.remove(bed)
+    else:
+        track = opt('--track', os.path.join(ROOT, CFG['music']['track']))
+        body = [float(x) for x in opt('--body', ':'.join(map(str, CFG['music']['body']))).split(':')]
+        build(track, body, a[1], float(opt('--to', LENGTH)))

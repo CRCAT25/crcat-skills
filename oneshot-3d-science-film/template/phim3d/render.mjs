@@ -1,4 +1,5 @@
-// node render.mjs <out.mp4|dir/> [--w 1920 --h 1080 --fps 30 --from s --to s --stills 1,2,3 --crf 18 --ref 1080 --hevc 1 --ofps 60]
+// node render.mjs <out.mp4|dir/> [--film /dev.js --w 1920 --h 1080 --fps 30 --from s --to s --stills 1,2,3 --crf 18 --ref 1080 --hevc 1 --ofps 60 --mb 5 --sh 0.01]
+// --mb/--sh: motion blur sub-frames and shutter (film seconds) for scenes that return mb: true
 // --ofps: play the frames sampled at --fps back at this rate (--fps 69 --ofps 60 = the film at 1.15x speed)
 // Renders film.js in headless Chrome (Metal GPU) and pipes JPEG frames into ffmpeg.
 import { chromium } from 'playwright-core';
@@ -25,7 +26,7 @@ await page.route('http://film.local/**', async (route) => {
   if (!f.startsWith(ROOT) || !fs.existsSync(f)) return route.fulfill({ status: 404, body: 'nf' });
   route.fulfill({ contentType: MIME[path.extname(f)] || 'application/octet-stream', body: fs.readFileSync(f) });
 });
-await page.goto(`http://film.local/page.html?w=${W}&h=${H}&ref=${opt.ref || 1080}&strips=${opt.strips || (W * H > 1920 * 1080 ? 32 : 1)}`);
+await page.goto(`http://film.local/page.html?w=${W}&h=${H}&ref=${opt.ref || 1080}&strips=${opt.strips || (W * H > 1920 * 1080 ? 32 : 1)}${opt.film ? '&film=' + opt.film : ''}${opt.mb ? '&mb=' + opt.mb + '&sh=' + (opt.sh || 0.01) : ''}`);
 await page.waitForFunction(() => window.READY || window.ERR, null, { timeout: 120000 });
 const err = await page.evaluate(() => window.ERR);
 if (err) { console.error(err); await browser.close(); process.exit(1); }
