@@ -47,6 +47,7 @@ Câu ngắn. Câu ngắn tiếp theo.
 ## Writing rules
 
 - Talk like a person explaining to a friend: "mình", "bạn", short sentences of 8–20 words. One number per sentence.
+  - Write so the TTS voice can read it smoothly: pauses with "—" or "…", no short comma lists, light fillers ("thực ra", "mà"). See [voice-and-final.md](voice-and-final.md) §1 "Write for the voice".
 - **Every number can be verified.** Keep `sources.md` (link, date, quoted figure).
   - Compute every derived number (totals, monthly payments, percentages) in a small script (`calc.py`) and copy the results into the script. Never do the maths by hand.
   - For money, prices, loans or rules: say the date of the figures and "không phải lời khuyên đầu tư" in the last chapter.

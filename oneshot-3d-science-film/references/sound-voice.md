@@ -53,14 +53,30 @@ SFX at the episode speed, sidechain-compressed under the narration + music bed +
 - Spell names for the voice and map them back for captions (`spell` in episode.json: "Thê-a" → "Theia"). The same
   map turns spoken numbers into digits on screen ("ba trăm bốn mươi lăm cây số một giờ" → "345 km/h",
   "hai mươi sáu phẩy năm độ" → "26,5 °C"); captions must show digits.
-- **ElevenLabs website**, voice "Nhật Phong – Narrative & Compelling" (`6adFm46eyy74snVn6YrT`), Eleven v4, Stability 0.5,
-  Similarity 0.75. One Generate per line → 2 takes download to `~/Downloads`. Then `./audio/vo/grab.sh <first index>`
-  moves today's pairs to `el_dl/NN_g1/_g2.mp3` in generation order. Generate lines in order, one at a time.
-  `grab.sh <first index> <UTC stamp>` only takes downloads newer than the stamp (when re-voicing a few lines).
-- **Ask before spending credits:** list the lines and the estimate (~1 credit per character, ~1,700 for Episode 1).
-- **Plan:** the account is paid since Episode 2 (commercial use, no attribution). Report credits used and left.
+- **Channel voice (default, free):** "GKP Nhật Phong", a VoiceStudio clone (profile `ec198ffa`, API `127.0.0.1:3900`; never
+  edit or delete the profile). `voice_np.py` lives in `~/Documents/Youtube/voice-nhat-phong/` (README, reference backup); a public
+  copy is `whiteboard-video/scripts/voice_np.py` in this repo (set `NP_PROFILE`, `NP_REF`). Check `curl 127.0.0.1:3900/health`, then
+  in the background:
+
+  ```
+  uv run --offline --no-project --python 3.12 --with numpy python ~/Documents/Youtube/voice-nhat-phong/voice_np.py \
+    --lines audio/vo/lines.json --out-dir audio/vo/el_dl --channel mtn
+  ```
+
+  It writes `el_dl/NN_g1.mp3`, one per line (the names `build_el.py` and `make_srt.py` already read), and `el_dl/np-report.json`
+  (what Whisper heard for each picked take). Per sentence: seeded takes, Whisper check, the take closest to the reference voice,
+  joined without stutter (one whole take per sentence, tempo ±5 %, pauses only lengthened inside existing breaths).
+  ~30 s per take, 3 takes per sentence; existing `NN_g1.mp3` are kept, so a rerun only voices missing lines.
+- **Write for the voice:** short sentences (≤ ~24 syllables), pauses with "—" or "…" (a comma after a short opening is often
+  ignored), no short comma lists that must pause, foreign names spelled the Vietnamese way with hyphens ("Thê-a"), numbers as
+  words, light spoken fillers ("thực ra", "mà") only where natural.
+- **ElevenLabs (paid, only if the user asks):** voice "Nhật Phong – Narrative & Compelling" (`6adFm46eyy74snVn6YrT`), Eleven v4,
+  Stability 0.5, Similarity 0.75, on the website. One Generate per line → 2 takes download to `~/Downloads`; `./audio/vo/grab.sh
+  <first index> [<UTC stamp>]` moves them to `el_dl/NN_g1/_g2.mp3` in generation order. Ask before spending credits (lines +
+  estimate, ~1 credit per character); report credits used and left.
 - **Re-voicing a few lines** (after notes on the script): keep the old takes (`el_dl` → `el_dl_v1/`,
-  `lines.json` → `lines.v1.json`), generate only the changed lines, grab them with a stamp, rebuild, and add `HOLDS`
+  `lines.json` → `lines.v1.json`), copy `el_dl_v1/np-cache` into the new `el_dl/` and rerun `voice_np.py` (unchanged lines come from the cache, only changed
+  ones are generated), rebuild, and add `HOLDS`
   in film.js where a longer line needs more picture rather than speeding the voice.
 - `python3 audio/vo/build_el.py audio/vo/vo_el.wav` lays takes at their times and prints gaps and OVERLAPs.
   Fix an overlap by moving that line in episode.json `nudge` (final seconds), not by speeding the voice.

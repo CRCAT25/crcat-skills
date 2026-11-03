@@ -62,8 +62,8 @@ PATH, Python 3 with Pillow. The template's `npm install` brings three 0.180.0 an
    coast, weather or orbit.
 4. **Silent 540p draft** of the whole film on the review page (`python3 review/serve.py 8797`; it supports
    seeking). Iterate until the user approves look, story and speed. **No voice, no final render before this.**
-5. **Voice:** `script_phim3d.md` + `audio/vo/lines.json` against the approved draft; show the script; ask before
-   spending ElevenLabs credits (lines + estimate). [references/sound-voice.md](references/sound-voice.md).
+5. **Voice:** `script_phim3d.md` + `audio/vo/lines.json` against the approved draft; show the script; then the free channel
+   voice (`voice_np.py --lines … --channel mtn`, runs ~30 s per take in the background). [references/sound-voice.md](references/sound-voice.md).
 6. **HUD cues** in `phim3d/hud.js` for every number/process in the narration; draft them with
    `hud.mjs` over the draft video and show the user. Add `HOLDS` where a line needs more picture time.
 7. **Final render** `./render_chunks.sh final` in the background (hours) while the sound is made.
@@ -80,7 +80,8 @@ PATH, Python 3 with Pillow. The template's `npm install` brings three 0.180.0 an
 
 ## Standing rules (from the user)
 
-- Ask before every ElevenLabs Generate (lines + credit estimate). The account is paid; voice "Nhật Phong".
+- Voice: the locked channel voice "GKP Nhật Phong", a free local VoiceStudio clone (profile `ec198ffa`), via `voice_np.py`.
+  Never edit or delete that profile. ElevenLabs only if the user asks, and ask before every Generate (lines + credit estimate).
 - No credits section in YouTube descriptions; only assets that need no attribution.
 - "Hạt bụi" is never a title or file name. No date in folder or file names.
 - Show work on localhost before voice and before the final render; "how" questions get a plan, not renders.

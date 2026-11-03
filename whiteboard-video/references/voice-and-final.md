@@ -4,13 +4,31 @@ Only start here after the user approved the **whole silent draft**.
 
 ## 1. Voice
 
-- **Consent first.** State the voice/provider, the number of characters, and the estimated cost (ElevenLabs ≈ 1 credit/char; 8 min ≈ 7–9k credits; two takes per chapter cost double). Wait for a clear yes.
-- **Voice:** any TTS provider; pick a calm narrative voice in the video language (ElevenLabs, a local TTS, etc.).
-  - Settings: Eleven v4, stability 0.5, similarity 0.75, native speed.
-- **TTS text per chapter:** `audio/tts-input-TAG-chN.txt` (N = the `### N ·` heading), each ≤ ~1,500 characters.
+- **Voice:** any TTS provider with a calm narrative voice in the video language. A free local option: a voice clone in
+  [VoiceStudio](https://github.com/debpalash/voicestudio) (OmniVoice, local API on `127.0.0.1:3900`), driven by `scripts/voice_np.py`
+  (set `NP_PROFILE` to the clone's profile id and `NP_REF` to its reference wav). Paid providers (ElevenLabs) need the user's consent for the cost.
+- **TTS text per chapter:** `audio/tts-input-TAG-chN.txt` (N = the `### N ·` heading).
   - The text is `script.md` with **numbers spelled out the Vietnamese way** ("1.000 km" becomes "một nghìn ki-lô-mét", "340 triệu" becomes "ba trăm bốn mươi triệu"). Keep `script.md` and the screen in digits.
-- **Two takes per chapter** (ElevenLabs gives 2 per Generate). Save them as `audio/voice-TAG-chN-take1.mp3`, `…-take2.mp3`.
-- **Pick and join:**
+  - Abbreviations spelled phonetically with hyphens: "ét-hát", "vê-ép-ba", "a-bê-ét".
+- **Write for the voice** (TTS models read the text literally):
+  - Short sentences (≤ ~24 syllables); a sentence the model keeps dropping words from gets split at its middle pause.
+  - Pauses: `—` and `…` work best; a comma after a short opening ("Hôm nay,") is often ignored.
+  - No mini-lists that must pause ("có mái che, có bốn chỗ"): they come out in one breath. Write one phrase or two sentences.
+  - Light spoken fillers ("thực ra", "mà", "thôi", "vừa… vừa…") sound human; do not overdo them.
+- **Make it** (run in the background; ~30 s per take, 3 takes per sentence: 8 minutes ≈ 3–4 h; one heavy job at a time):
+
+```
+uv run --offline --no-project --python 3.12 --with numpy python $SKILL/scripts/voice_np.py . --tag TAG   # NP_PROFILE=… NP_REF=… first
+# -> audio/voice-raw-TAG.wav (48 kHz) + voice-offsets-TAG.json (same as build_voice.py) + np-report-TAG.json
+```
+
+  - Per sentence it makes seeded takes, transcribes them, keeps the take with every word heard, the voice closest to the
+    reference and a natural pace, then joins without stutter: one whole take per sentence, tempo ±5 %, pauses lengthened only
+    inside breaths the take already has (room tone, 15 ms crossfades).
+  - Read `np-report-TAG.json`: what Whisper heard for each picked take. A misheard number or name: reword that sentence and rerun
+    with a new tag (cached takes are reused, only the changed sentences are generated).
+- **Other voices (ElevenLabs, paid):** only with consent for the cost (≈ 1 credit/char; 8 min ≈ 7–9k credits; two takes cost double).
+  Generate per chapter (≤ ~1,500 characters each), 2 takes, save as `audio/voice-TAG-chN-take1.mp3`, `…-take2.mp3`, then pick and join:
 
 ```
 R="uv run --offline --no-project --python 3.12 --with pillow --with numpy --with scipy python"

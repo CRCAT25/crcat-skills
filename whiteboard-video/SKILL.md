@@ -1,13 +1,13 @@
 ---
 name: whiteboard-video
-description: Make a hand-drawn whiteboard explainer video (YouTube 16:9, Vietnamese by default). A marker pen draws text, icons, charts, receipts and stickman characters on paper, in sync with the narration. Use when asked for a "video vẽ tay", "whiteboard", "bút vẽ lên bảng", a sketch/doodle explainer. Self-contained Python (Pillow + numpy + scipy) library, fonts, icons, characters and a runnable template project.
+description: Make a hand-drawn whiteboard explainer video (YouTube 16:9, Vietnamese by default). A marker pen draws text, icons, charts, receipts and stickman characters on paper, in sync with the narration — Use when asked for a "video vẽ tay", "whiteboard", "bút vẽ lên bảng", a sketch/doodle explainer. Self-contained Python (Pillow + numpy + scipy) library, fonts, icons, characters and a runnable template project.
 ---
 
 # Whiteboard video (vẽ tay bằng bút)
 
 The output is an MP4 made of "boards". On each board a pen draws text letter by letter, icons, arrows, bars,
 receipts and stickman characters. Colour stickers pop in at the emotional beats. Each element starts at the moment
-its sentence is spoken. Everything is code: no image generator and no paid service is needed, except the voice.
+its sentence is spoken. Everything is code: no image generator and no paid service is needed (the voice can be a free local TTS).
 
 Everything lives in this folder (`~/.claude/skills/whiteboard-video`, written `$SKILL` below):
 
@@ -16,7 +16,7 @@ Everything lives in this folder (`~/.claude/skills/whiteboard-video`, written `$
   - `frame_kit.py` (fk): transitions, previews, rendering.
   - `anim_kit.py`: living props that move every frame (counters, vehicles, clocks, calendars, gauges, stamps, chat bubbles…) on an `ABoard`.
   - `stickman.py` with `mascot_v03.py` and `mascot_v04.py`: the stickman host.
-  - Voice tools: `pick_takes.py` (best TTS take per chapter), `build_voice.py` (join the takes), `stretch_pauses.py` (longer beats between sentences, speech untouched).
+  - Voice tools: `pick_takes.py` (best TTS take per chapter), `build_voice.py` (join the takes), `stretch_pauses.py` (longer beats between sentences, speech untouched), `voice_np.py` (free local VoiceStudio clone voice: takes, Whisper check, smooth join).
   - Audio and alignment tools: `make_music_pad.py`, `mix_audio.py`, `align_captions.py`, `fix_onsets.py`.
   - `make_shorts.py`: cuts the final into vertical Shorts with captions.
   - `qa_export.py`.
@@ -72,9 +72,9 @@ R="uv run --offline --no-project --python 3.12 --with pillow --with numpy --with
    - `$R render.py draft` writes `exports/draft-v01-NO-VOICE.mp4` (30 fps, music pad + pops). It renders at ~2.4× real time.
    - Run it in the background and wait for the notification.
    - Show the user the **whole** draft, ideally on a localhost review page, and wait for their OK. Do not create the voice before that.
-6. **Voice.** Only after approval, and only with consent for the cost. Then the final export.
-   - Voice: ElevenLabs or any TTS, generated per chapter from `audio/tts-input-TAG-chN.txt` (numbers spelled out), 2 takes each.
-   - `pick_takes.py` picks the take closest to the text (read its diffs), then `build_voice.py` joins them.
+6. **Voice.** Only after approval. Then the final export.
+   - Voice: a free local TTS (e.g. a VoiceStudio clone made by `scripts/voice_np.py`, see voice-and-final.md §1) from `audio/tts-input-TAG-chN.txt` (numbers and abbreviations spelled out, short sentences). It picks, checks and joins the takes itself.
+   - A paid voice (ElevenLabs) only with consent for the cost: 2 takes per chapter, `pick_takes.py` (read its diffs), then `build_voice.py`.
    - Alignment: `render.py plan`, then `align_captions.py`, then `fix_onsets.py`. This writes `captions/pacing-<TAG>b.json`.
    - The real voice is usually shorter than estimated: `stretch_pauses.py --src v01 --tag v02` lengthens the beats, then continue with `TAG=v02`.
    - Mix: `render.py beds`, then `mix_audio.py` (−14 LUFS).
